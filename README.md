@@ -1,96 +1,112 @@
-# Foocos Reddit Game
+# Foocos — Focus Timing Game (Reddit)
 
-A small Reddit game built on **Devvit Web** that runs inside Reddit as a micro-frontend (iframe). This repository includes a React + Tailwind front end and a serverless Node backend (Hono + tRPC) to power the game logic.
+**Foocos** is a small, addictive timing game built as a Reddit micro-app using **Devvit Web**. It runs inside Reddit as an embedded iframe and challenges players to stop a timer as close to their target time as possible.
 
-## ✅ What’s Included
+> ⚡️ **Goal:** Pick a target time, hit start, and stop the timer when you think the target has passed. Hit within **10ms** for **GOD MODE**!
 
-- **Client (React + Vite)**: Renders game UI inside Reddit views (inline + expanded).
-- **Server (Hono + tRPC)**: Handles game state, form submissions, and any backend logic via Devvit serverless runtime.
-- **Devvit Integration**: Uses `devvit.json` to register entrypoints for Reddit’s UI (inline & expanded view).
+---
 
-## 🚀 Quick Start (Dev Environment)
+## 🎮 How the Game Works
 
-### 1) Prerequisites
+### Gameplay
+- Choose a **target time** (e.g., 5.00 seconds).
+- Press **START FOCUS** to begin the timer.
+- Press **STOP** when you think the target time has elapsed.
+- Your score is based on how close your final time is to the target.
 
+### Features
+- **Blind Mode**: Hide the timer once you're past half of the target time to make it harder.
+- **GOD MODE**: Stop within **±0.01s** and you earn the perfect focus badge.
+- **Instant feedback**: Toast notifications show when you hit a near-perfect or perfect run.
+
+---
+
+## 🧩 Where the Code Lives
+
+### Client (UI)
+- `src/client/game.tsx` — Main game UI + logic (expanded view)
+- `src/client/splash.tsx` — Start screen (inline view)
+- `src/client/index.css` — Styling for the game UI
+
+### Devvit Integration
+- `devvit.json` — App configuration and entrypoint mapping used by Devvit.
+  - `splash.html` is used for the inline view (feed).
+  - `game.html` is used for the expanded view (modal).
+
+### Server (backend)
+This repo has server scaffolding for Devvit services, but the game itself is entirely client-driven.
+- `src/server/index.ts` — Hono server entrypoint
+- `src/server/routes/` — API routes (currently no game-specific endpoints)
+
+---
+
+## 🚀 Setup & Development (Local)
+
+### Prerequisites
 - Node.js **v22** (required by Devvit)
-- A Reddit account and a Devvit developer app configured
-- [Devvit CLI](https://developers.reddit.com/docs/devvit/cli/)
+- A Reddit account with a Devvit developer app
+- Devvit CLI installed (`npm install -g @devvit/cli` if not already)
 
-### 2) Install
+### 1) Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3) Login (Devvit CLI)
+### 2) Login to Devvit
 
 ```bash
 npm run login
 ```
 
-### 4) Run locally (Live Reload)
+### 3) Start the dev server
 
 ```bash
 npm run dev
 ```
 
-This will start the Devvit local server and open the app inside Reddit with live reloading.
+This launches the local Devvit runtime and opens the game inside Reddit.
 
-## 📦 Build & Deploy
+---
 
-### Build for Production
+## 🛠 Build & Deploy
+
+### Build production assets
 
 ```bash
 npm run build
 ```
 
-### Upload a New Version (Deploy)
+### Deploy a new app version
 
 ```bash
 npm run deploy
 ```
 
-### Publish to Reddit for Review
+### Publish for Reddit review
 
 ```bash
 npm run launch
 ```
 
-> Tip: Use `npm run dev` while iterating; it’s the fastest way to validate changes.
+---
 
-## 🧠 Project Structure
+## 🧠 How to Extend Foocos
 
-```
-src/
-  client/          # React UI (runs in the browser iframe)
-    game.html      # Expanded view entrypoint
-    splash.html    # Inline view entrypoint
-    game.tsx       # Main game UI (expanded)
-    splash.tsx     # Compact preview UI (inline)
-    global.ts      # Shared client constants/utilities
+### Add a new UI entrypoint
+1. Add `src/client/myNewView.html`
+2. Add a matching React entry file (e.g., `src/client/myNewView.tsx`)
+3. Register it in `devvit.json` under `entrypoints`
 
-  server/          # Devvit server code (runs in Devvit runtime)
-    index.ts       # Hono server entrypoint
-    routes/        # API and form endpoints
-
-  shared/          # Types and helpers shared between client/server
-    api.ts
-
-devvit.json        # Devvit app configuration (entrypoints + metadata)
-```
-
-## ✅ How to Extend
-
-- Add a new UI page: create an `*.html` entrypoint under `src/client` and register it in `devvit.json`.
-- Add server logic: create a new route under `src/server/routes/` and wire it into `src/server/index.ts`.
-- Share types: add them to `src/shared` and import in both client/server.
-
-## 🧪 Useful Commands
-
-- `npm run type-check` – Runs TypeScript type-check + lint
-- `npm test` – Runs unit tests (if any)
-- `npm run lint` – Runs linter
+### Add backend logic
+1. Create a new route under `src/server/routes/`
+2. Wire it into `src/server/index.ts`
+3. Call it from the client using `fetch` or `@devvit/web/client` APIs
 
 ---
 
-If you want help adding new game features or hooking up persistent storage (Redis, etc.), just ask! 💡
+If you'd like, I can also help you add: 
+- **User score tracking**, 
+- **Leaderboards**, 
+- **Persistent storage (Redis)**, or 
+- **A GitHub Actions CI workflow** to run `npm run type-check` on every push.
